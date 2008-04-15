@@ -3,7 +3,7 @@ GeSHify Changelog
 
 [[ known bugs ]]
 	» none
-	Plese report any bugs you encounter or your feature wish list to neverpanic@gmail.com. Thanks.
+	Plese report any bugs you encounter or your feature wish list to neverpanic@gmail.com. Thank you.
 
 [[ 0.3.6.0 :: 15.04.2008 ]]
 	» fixed bug where strict=false would still set strict to true because PHP treats string(false) as bool(true)
