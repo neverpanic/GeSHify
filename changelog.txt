@@ -1,0 +1,14 @@
+GeSHify Changelog
+-----------------
+
+[[ known bugs ]]
+	» none
+	Plese report any bugs you encounter or your feature wish list to neverpanic@gmail.com. Thanks.
+
+[[ 0.3.6.0 :: 15.04.2008 ]]
+	» fixed bug where strict=false would still set strict to true because PHP treats string(false) as bool(true)
+	» added keyword_links={true|false|1|0} parameter and default setting in the control panel
+	» added documentation for start={number}, that was present since 0.3.something
+	» updated GeSHi 1.0 to version 1.0.7.21
+
+[[ start of changelog at version 0.3.5 ]]
