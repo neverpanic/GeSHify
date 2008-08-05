@@ -5,6 +5,11 @@ GeSHify Changelog
 	» none
 	Plese report any bugs you encounter or your feature wish list to neverpanic@gmail.com. Thank you.
 
+[[ 0.3.6.1 :: 05.08.2008 ]]
+	» added french translation (thanks to Fabien Amann; http://feub.net/)
+	» added german translation
+	» switched GeSHi directories to use the svn:externals property so GeSHify releases will always contain the latest and greatest GeSHi-versions
+
 [[ 0.3.6.0 :: 15.04.2008 ]]
 	» fixed bug where strict=false would still set strict to true because PHP treats string(false) as bool(true)
 	» added keyword_links={true|false|1|0} parameter and default setting in the control panel

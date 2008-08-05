@@ -8,7 +8,7 @@
  */
 class Geshify {
 	var $name = 'GeSHify';
-	var $version = '0.3.6.0';
+	var $version = '0.3.6.1';
 	var $description = 'Passes code through the GeSHi syntax highlighter';
 	var $docs_url = 'http://www.neverpanic.de/blog/single/geshify-a-geshi-syntax-highlighting-extension-for-expression-engine';
 	var $settings = array();
