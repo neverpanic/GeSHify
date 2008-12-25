@@ -5,6 +5,10 @@ GeSHify Changelog
 	» none
 	Plese report any bugs you encounter or your feature wish list to neverpanic@gmail.com. Thank you.
 
+[[ 0.3.7 :: 25.12.2008 ]]
+	» added support for overall_class and overall_id per request at http://expressionengine.com/forums/viewthread/70310/P18/#507509
+	» GeSHi 1.0.8.2 & GeSHi 1.1.2alpha4dev
+
 [[ 0.3.6.1 :: 05.08.2008 ]]
 	» added french translation (thanks to Fabien Amann; http://feub.net/)
 	» added german translation
