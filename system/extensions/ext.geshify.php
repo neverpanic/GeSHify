@@ -3,12 +3,12 @@
  * @package	GeSHify
  * @author	Clemens Lang <neverpanic@gmail.com>
  * @link	http://www.neverpanic.de/blog/single/geshify-a-geshi-syntax-highlighting-extension-for-expression-engine
- * @version	0.3.6.0
+ * @version	0.3.7
  * @license	GPL
  */
 class Geshify {
 	var $name = 'GeSHify';
-	var $version = '0.3.6.1';
+	var $version = '0.3.7';
 	var $description = 'Passes code through the GeSHi syntax highlighter';
 	var $docs_url = 'http://www.neverpanic.de/blog/single/geshify-a-geshi-syntax-highlighting-extension-for-expression-engine';
 	var $settings = array();
@@ -55,7 +55,7 @@ class Geshify {
 		}
 		unset($key, $val);
 		// if you adjust this, make sure you also adjust the foreach loop used to parse the arguments
-		$this->llimit = '/'.preg_quote($this->settings['ldelimiter'], '/').preg_quote($this->settings['tag_name'], '/').'(?:\s*(?:((?:type|lang)=\w*)|(strict=(?:true|false|1|0))|(line=(?:normal|none|fancy\d*))|(start=\d+)|(keyword_links=(?:true|false|1|0))))*'.preg_quote($this->settings['rdelimiter'], '/').'/i';
+		$this->llimit = '/'.preg_quote($this->settings['ldelimiter'], '/').preg_quote($this->settings['tag_name'], '/').'(?:\s*(?:((?:type|lang)=\w*)|(strict=(?:true|false|1|0))|(line=(?:normal|none|fancy\d*))|(start=\d+)|(keyword_links=(?:true|false|1|0))|(overall_class=\w*)|(overall_id=\w*)))*'.preg_quote($this->settings['rdelimiter'], '/').'/i';
 		$this->rlimit = $this->settings['ldelimiter'].'/'.$this->settings['tag_name'].$this->settings['rdelimiter'];
 	}
 
@@ -118,7 +118,7 @@ class Geshify {
 
 	/**
 	 * Updates the extension by applying the required changes
-	 * @param	string	$current		Version to upgrade to
+	 * @param	string	$current		version to upgrade to
 	 * @return	void
 	 * @access	public
 	 */
@@ -135,6 +135,10 @@ class Geshify {
 			// update from pre-0.3.6.0
 			$this->settings['keyword_links'] = true;
 			$DB->query("UPDATE ".$PREFS->ini('db_prefix')."_extensions SET settings = '".$DB->escape_str(serialize($this->settings))."' WHERE class = 'Geshify'");
+		}
+		if (version_compare($this->version, '0.3.7') === -1)
+		{
+			// nothing to do when upgrading from pre-0.3.7
 		}
 		// updating would go here
 		// set the version in the DB to current
@@ -167,7 +171,7 @@ class Geshify {
 	function pre_typography($str, $typo, $prefs)
 	{
 		// we don't need the DB, nor IN, nor DSP
-		// will use OUT to display user_error messages
+		// should probably use OUT to display user_error messages
 		global $EXT, $OUT;
 		// here we're doing the actual work
 		if ($EXT->last_call !== FALSE)
@@ -227,6 +231,8 @@ class Geshify {
 			{
 				$pos[$match[1]]['keyword_links'] = NULL;
 			}
+			$pos[$match[1]]['overall_class']	= !empty($matches[6][$key][0]) ? substr($matches[6][$key][0], 14) : NULL;
+			$pos[$match[1]]['overall_id']		= !empty($matches[7][$key][0]) ? substr($matches[7][$key][0], 11) : NULL;
 		}
 		unset($matches, $key, $match);
 		// krsort the array so we can use substr stuff and won't mess future replacements
@@ -254,7 +260,7 @@ class Geshify {
 			}
 			else
 			{
-				// Create an index.html so the contents will not be listed.
+				// create an index.html so the contents will not be listed.
 				@touch($cache_dir.'index.html');
 			}
 		}
@@ -267,7 +273,7 @@ class Geshify {
 			{
 				if ($f != 'index.html' && $f{0} != '.')
 				{
-					if ($cur-filemtime($cache_dir.$f) > $this->settings['cache_cutoff'])
+					if ($cur - filemtime($cache_dir.$f) > $this->settings['cache_cutoff'])
 					{
 						// File is older than cutoff, delete it.
 						@unlink($cache_dir.$f);
@@ -283,8 +289,9 @@ class Geshify {
 			{
 				// we have a matching end tag.
 				// make sure cache is regenerated when changing options, too!
-				$md5 = md5(($not_geshified = substr($str, $code_pos+strlen($match['match']), ($code_end_pos - $code_pos - strlen($match['match'])))).print_r($match, TRUE).print_r($this->settings, TRUE));
-				// Check whether we already have this in a cache file
+				$md5 = md5(($not_geshified = substr($str, $code_pos + strlen($match['match']), ($code_end_pos - $code_pos - strlen($match['match'])))).print_r($match, TRUE).print_r($this->settings, TRUE));
+				
+				// check whether we already have this in a cache file
 				if (is_file($cache_dir.$md5) && is_readable($cache_dir.$md5))
 				{
 					if (is_callable('file_get_contents'))
@@ -309,12 +316,13 @@ class Geshify {
 					{
 						// use GeSHi 1.1
 						include_once(dirname(__FILE__).'/geshi-1.1/class.geshi.php');
-						// highlight code according to type setting, default to php
+						// highlight code according to type setting, default to setting
 						$geshi = new GeSHi($not_geshified, $match['type'] !== NULL ? $match['type'] : $this->settings['default_type']);
 						// neither line numbers, nor strict mode is supported in GeSHi 1.1 yet.
 						$str_error = $geshi->error();
 						if (empty($str_error))
 						{
+							// set line number style, if GeSHi supports it
 							if (is_callable($geshi, 'enableLineNumbers'))
 							{
 								switch (!empty($match['line']) ? strtolower(preg_replace('/\d*/', '', $match['line'])) : $this->settings['default_line'])
@@ -330,6 +338,8 @@ class Geshify {
 										break;
 								}
 							}
+							
+							// set start line number if GeSHi supports it
 							if (is_callable(array($geshi, 'startLineNumbersAt')))
 							{
 								if ($match['start'])
@@ -337,6 +347,8 @@ class Geshify {
 									$geshi->startLineNumbersAt($match['start']);
 								}
 							}
+							
+							// set strict mode if GeSHi supports it
 							if (is_callable(array($geshi, 'enableStrictMode')))
 							{
 								if ($match['strict'])
@@ -344,14 +356,38 @@ class Geshify {
 									$geshi->enableStrictMode(TRUE);
 								}
 							}
+							
+							// set encoding (afair this is for legacy reasons only anyway)
 							if (is_callable(array($geshi, 'setEncoding')))
 							{
 								$geshi->setEncoding($this->settings['geshi_encoding']);
 							}
+							
+							// set whether to link keywords to the documentation
 							if (is_callable(array($geshi, 'enableKeywordLinks')))
 							{
 								$geshi->enableKeywordLinks((bool) ($match['keyword_links'] !== NULL) ? $match['keyword_links'] : $this->settings['keyword_links']);
 							}
+							
+							// set overall class name
+							if (is_callable(array($geshi, 'setOverallClass')))
+							{
+								if ($match['overall_class'] != NULL)
+								{
+									$geshi->setOverallClass($match['overall_class']);
+								}
+							}
+							
+							// set overall id
+							if (is_callable(array($geshi, 'setOverallId')))
+							{
+								if ($match['overall_id'] != NULL)
+								{
+									$geshi->setOverallId($match['overall_id']);
+								}
+							}
+							
+							// parse the code
 							$geshified = $geshi->parseCode();
 						}
 						else
@@ -366,7 +402,9 @@ class Geshify {
 						// highlight code according to type setting, default to php
 						$geshi = new GeSHi($not_geshified, $match['type'] !== NULL ? $match['type'] : $this->settings['default_type']);
 						$str_error = $geshi->error();
-						if (empty($str_error)) {
+						if (empty($str_error))
+						{
+							// enable line numbers
 							switch (!empty($match['line']) ? strtolower(preg_replace('/\d*/', '', $match['line'])) : $this->settings['default_line'])
 							{
 								case 'normal':
@@ -379,16 +417,38 @@ class Geshify {
 									$geshi->enable_line_numbers(GESHI_NO_LINE_NUMBERS);
 									break;
 							}
+							
+							// set first line number
 							if ($match['start'])
 							{
 								$geshi->start_line_numbers_at($match['start']);
 							}
+							
+							// set strict mode
 							if ($match['strict'])
 							{
 								$geshi->enable_strict_mode(TRUE);
 							}
+							
+							// enable or disable keyword links
 							$geshi->enable_keyword_links((bool) ($match['keyword_links'] !== NULL) ? $match['keyword_links'] : $this->settings['keyword_links']);
+							
+							// set overall class name
+							if ($match['overall_class'] != NULL)
+							{
+								$geshi->set_overall_class($match['overall_class']);
+							}
+							
+							// set overall id
+							if ($match['overall_id'] != NULL)
+							{
+								$geshi->set_overall_id($match['overall_id']);
+							}
+							
+							// set encoding (for legacy reasons afaik)
 							$geshi->set_encoding($this->settings['geshi_encoding']);
+							
+							// parse the source code
 							$geshified = $geshi->parse_code();
 						}
 						else
@@ -475,7 +535,7 @@ class Geshify {
 		{
 			// load the replacements from the file
 			$d = dir($cache_dir = dirname(__FILE__).'/'.$this->settings['cache_dir']);
-			while ($file = $d->read() !== FALSE)
+			while (($file = $d->read()) !== FALSE)
 			{
 				if ($file != 'index.html' && $file{0} != '.')
 				{
