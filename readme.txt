@@ -1,7 +1,7 @@
-GeSHify v 0.3.6.1
------------------
+GeSHify
+-------
 
-Thanks for downloading GeSHify. To install GeSHify, extract the archive in your Expression Engine directory, upload the added files and enable GeSHify in the Extension Manager in your control panel by going to Admin ª Utilities ª Extensions Manager and clicking ìenableî in the table row for GeSHify.
+Thanks for downloading GeSHify. To install GeSHify, extract the archive in your Expression Engine directory, upload the added files and enable GeSHify in the Extension Manager in your control panel by going to Admin ¬ª Utilities ¬ª Extensions Manager and clicking ‚Äúenable‚Äù in the table row for GeSHify.
 If you're updating from a previous version of GeSHify the process is the same.
 Please report any bugs you encounter or your feature wish list to neverpanic@gmail.com.
 
