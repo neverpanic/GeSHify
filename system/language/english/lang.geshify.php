@@ -37,10 +37,10 @@ $L = array(
 "Cache time in seconds",
 
 "1.0-stable" =>
-"1.0.7 (stable)",
+"1.0 (stable)",
 
 "1.1-alpha" =>
-"1.1.2 (alpha) - use at your own risk",
+"1.1 (alpha) - use at your own risk",
 
 "geshi_version" =>
 "Version of GeSHi to use",

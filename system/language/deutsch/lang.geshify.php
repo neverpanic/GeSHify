@@ -37,10 +37,10 @@ $L = array(
 "maximale Cachedauer in Sekunden",
 
 "1.0-stable" =>
-"1.0.7 (stable)",
+"1.0 (stable)",
 
 "1.1-alpha" =>
-"1.1.2 (alpha) - Benutzung auf eigene Gefahr!",
+"1.1 (alpha) - Benutzung auf eigene Gefahr!",
 
 "geshi_version" =>
 "zu benutzende GeSHi-Version",
