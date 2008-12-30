@@ -3,12 +3,12 @@
  * @package	GeSHify
  * @author	Clemens Lang <neverpanic@gmail.com>
  * @link	http://www.neverpanic.de/blog/single/geshify-a-geshi-syntax-highlighting-extension-for-expression-engine
- * @version	0.3.7
+ * @version	0.3.8
  * @license	GPL
  */
 class Geshify {
 	var $name = 'GeSHify';
-	var $version = '0.3.7';
+	var $version = '0.3.8';
 	var $description = 'Passes code through the GeSHi syntax highlighter';
 	var $docs_url = 'http://www.neverpanic.de/blog/single/geshify-a-geshi-syntax-highlighting-extension-for-expression-engine';
 	var $settings = array();
@@ -28,10 +28,11 @@ class Geshify {
 		'tag_name' => 'code',
 		'default_type' => 'html4strict',
 		'default_line' => 'normal',
-		'keyword_links' => true,
+		'keyword_links' => TRUE,
 		'geshi_version' => '1.0',
 		'geshi_encoding' => 'utf-8',
 		'cache_cutoff' => 86400,
+		'check_for_updates' => TRUE,
 	);
 
 	/**
@@ -78,6 +79,7 @@ class Geshify {
 		$settings['geshi_version'] = array('s', array('1.0' => '1.0-stable', '1.1' => '1.1-alpha'), '1.0');
 		$settings['geshi_encoding'] = 'utf-8';
 		$settings['cache_cutoff'] = '86400';
+		$settings['check_for_updates'] = array('r', array(1 => 'yes', 0 => 'no'), 1);
 		return $settings;
 	}
 
@@ -114,6 +116,29 @@ class Geshify {
 				'enabled' => 'y'
 			)
 		));
+		$DB->query($DB->insert_string($PREFS->ini('db_prefix').'_extensions',
+			array(
+				'extension_id' => '',
+				'class' => 'GeSHify',
+				'method' => 'addon_check_register_source',
+				'hook' => 'lg_addon_update_register_source',
+				'settings' => '',
+				'priority' => 10,
+				'version' => $DB->escape_str($this->version),
+				'enabled' => 'y'
+			)
+		));
+		$DB->query($DB->insert_string($PREFS->ini('db_prefix').'_extensions'),
+			array(
+				'extension_id' => '',
+				'class' => 'GeSHify',
+				'method' => 'addon_check_register_addon',
+				'hook' => 'lg_addon_update_register_addon',
+				'settings' => '',
+				'version' => $DB->escape_str($this->version),
+				'enabled' => 'y'
+			)
+		);
 	}
 
 	/**
@@ -133,20 +158,47 @@ class Geshify {
 		if (version_compare($this->version, '0.3.6.0') === -1)
 		{
 			// update from pre-0.3.6.0
-			$this->settings['keyword_links'] = true;
+			$this->settings['keyword_links'] = TRUE;
 			$DB->query("UPDATE ".$PREFS->ini('db_prefix')."_extensions SET settings = '".$DB->escape_str(serialize($this->settings))."' WHERE class = 'Geshify'");
 		}
 		if (version_compare($this->version, '0.3.7') === -1)
 		{
 			// nothing to do when upgrading from pre-0.3.7
 		}
-		// updating would go here
+		if (version_compare($this->version, '0.3.8') === -1)
+		{
+			$this->settings['check_for_updates'] = TRUE;
+			// add the necessary hooks for the addon checker
+			$DB->query($DB->insert_string($PREFS->ini('db_prefix').'_extensions',
+				array(
+					'extension_id' => '',
+					'class' => 'GeSHify',
+					'method' => 'addon_check_register_source',
+					'hook' => 'lg_addon_update_register_source',
+					'settings' => '',
+					'priority' => 10,
+					'version' => $DB->escape_str($this->version),
+					'enabled' => 'y'
+				)
+			));
+			$DB->query($DB->insert_string($PREFS->ini('db_prefix').'_extensions'),
+				array(
+					'extension_id' => '',
+					'class' => 'GeSHify',
+					'method' => 'addon_check_register_addon',
+					'hook' => 'lg_addon_update_register_addon',
+					'settings' => '',
+					'version' => $DB->escape_str($this->version),
+					'enabled' => 'y'
+				)
+			);
+		}
 		// set the version in the DB to current
 		$DB->query("UPDATE ".$PREFS->ini('db_prefix')."_extensions SET version = '".$DB->escape_str($this->version)."' WHERE class = 'Geshify'");
 	}
 
 	/**
-	 * Uninstalls the extension by deleting the extension hooks - note that the settings will be preserved
+	 * Uninstalls the extension by deleting the extension hooks
 	 * @param	void
 	 * @return	void
 	 * @access	public
@@ -165,7 +217,7 @@ class Geshify {
 	 * @return	string			text where the code has been stripped and code positions marked with an MD5-ID
 	 * @access	public
 	 * @global	$EXT			Extension-Object to support multiple calls to the same extension hook
-	 * @global	$OUT			could be used to display errors - it isn't at the moment, though @see next line
+	 * @global	$OUT			could be used to display errors - it isn't at the moment
 	 * @todo					Display error using $OUT
 	 */
 	function pre_typography($str, $typo, $prefs)
@@ -563,6 +615,50 @@ class Geshify {
 			}
 			return $str;
 		}
+	}
+	
+	/**
+	 * registers my source file with the LG Addon Updater
+	 * @param	array	$sources	array of source files URIs
+	 * @return	array				the same array plus the source file URI for this extension
+	 * @access	public
+	 * @global	$EXT				Extension object to support multiple calls to this hook
+	 */
+	function addon_check_register_source($sources)
+	{
+		global $EXT;
+		if ($EXT->last_call !== FALSE)
+		{
+			$sources = $EXT->last_call;
+		}
+		// add new source and return it
+		if ($this->settings['check_for_updates'] == TRUE)
+		{
+			$sources[] = 'http://www.neverpanic.de/documents/expressionengine-versions.php';
+		}
+		return $sources;
+	}
+	
+	/**
+	 * registers this extension with the LG Addon Updater
+	 * @param	array	$addons		array of addon IDs
+	 * @return	array				same array plus the addon ID for this extension
+	 * @access	public
+	 * @global	$EXT				Extension object to support multiple calls to this hook
+	 */
+	function addon_check_register_addon($addons)
+	{
+		global $EXT;
+		if ($EXT->last_call !== FALSE)
+		{
+			$addons = $EXT->last_call;
+		}
+		// register the current version with the LG Addon Updater
+		if ($this->settings['check_for_updates'])
+		{
+			$addons['GeSHify'] = $this->version;
+		}
+		return $addons;
 	}
 }
 ?>

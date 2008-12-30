@@ -59,6 +59,9 @@ $L = array(
 
 "no" =>
 "Non",
+
+"check_for_updates" =>
+"Missing translation: Check for updates at the author's web site"
 //----------------------------------------
 // END
 ''=>''

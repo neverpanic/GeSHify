@@ -59,6 +59,9 @@ $L = array(
 
 "no" =>
 "No",
+
+"check_for_updates" =>
+"Check for updates at the author's web site",
 //----------------------------------------
 // END
 ''=>''
