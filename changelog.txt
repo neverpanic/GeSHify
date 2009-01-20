@@ -3,7 +3,7 @@ GeSHify Changelog
 
 [[ known bugs ]]
 	» none
-	Plese report any bugs you encounter or your feature wish list to neverpanic@gmail.com. Thank you.
+	Please report any bugs you encounter or your feature wish list to neverpanic@gmail.com. Thank you.
 
 [[ 0.3.8 :: 30.12.2008 ]]
 	» added LG Addon Updater support

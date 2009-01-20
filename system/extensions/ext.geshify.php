@@ -128,7 +128,7 @@ class Geshify {
 				'enabled' => 'y'
 			)
 		));
-		$DB->query($DB->insert_string($PREFS->ini('db_prefix').'_extensions'),
+		$DB->query($DB->insert_string($PREFS->ini('db_prefix').'_extensions',
 			array(
 				'extension_id' => '',
 				'class' => 'GeSHify',
@@ -138,7 +138,7 @@ class Geshify {
 				'version' => $DB->escape_str($this->version),
 				'enabled' => 'y'
 			)
-		);
+		));
 	}
 
 	/**
