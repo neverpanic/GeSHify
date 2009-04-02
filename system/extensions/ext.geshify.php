@@ -341,7 +341,7 @@ class Geshify {
 			$pos[$match[1]]['match'] = $match[0];
 			
 			// lang (called type internally for historical reasons)
-			if ($matches[1][$key][0] != '')
+			if (!empty($matches[1][$key][0]))
 			{
 				// strip slashes for filesystem security and quotes because the value might be quoted
 				$pos[$match[1]]['type'] = str_replace(array('/', '"', "'"), '', substr($matches[1][$key][0], 5));
@@ -352,7 +352,7 @@ class Geshify {
 			}
 			
 			// strict
-			if ($matches[2][$key][0] != '')
+			if (!empty($matches[2][$key][0]))
 			{
 				switch (str_replace(array('"', "'"), '', strtolower(substr($matches[2][$key][0], 7))))
 				{
@@ -375,13 +375,13 @@ class Geshify {
 			}
 			
 			// line
-			$pos[$match[1]]['line'] = ($matches[3][$key][0] != '') ? str_replace(array('"', "'"), '', substr($matches[3][$key][0], 5)) : NULL;
+			$pos[$match[1]]['line'] = !empty($matches[3][$key][0]) ? str_replace(array('"', "'"), '', substr($matches[3][$key][0], 5)) : NULL;
 			
 			// start
-			$pos[$match[1]]['start'] = ($matches[4][$key][0] != '') ? str_replace(array('"', "'"), '', substr($matches[4][$key][0], 6)) : NULL;
+			$pos[$match[1]]['start'] = !empty($matches[4][$key][0]) ? str_replace(array('"', "'"), '', substr($matches[4][$key][0], 6)) : NULL;
 			
 			// keyword_links
-			if ($matches[5][$key][0] != '')
+			if (!empty($matches[5][$key][0]))
 			{
 				switch (str_replace(array("'", '"'), '', strtolower(substr($matches[5][$key][0], 14))))
 				{
@@ -404,10 +404,10 @@ class Geshify {
 			}
 			
 			// overall_class
-			$pos[$match[1]]['overall_class'] = ($matches[6][$key][0] != '') ? str_replace(array("'", '"'), '', substr($matches[6][$key][0], 14)) : NULL;
+			$pos[$match[1]]['overall_class'] = !empty($matches[6][$key][0]) ? str_replace(array("'", '"'), '', substr($matches[6][$key][0], 14)) : NULL;
 			
 			// overall_id
-			$pos[$match[1]]['overall_id'] = ($matches[7][$key][0] != '') ? str_replace(array("'", '"'), '', substr($matches[7][$key][0], 11)) : NULL;
+			$pos[$match[1]]['overall_id'] = !empty($matches[7][$key][0]) ? str_replace(array("'", '"'), '', substr($matches[7][$key][0], 11)) : NULL;
 		}
 		
 		// clean variables used in the loop
