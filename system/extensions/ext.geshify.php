@@ -8,9 +8,9 @@
  */
 class Geshify {
 	var $name = 'GeSHify';
-	var $version = '0.3.8';
+	var $version = '0.3.9';
 	var $description = 'Passes code through the GeSHi syntax highlighter';
-	var $docs_url = 'http://www.neverpanic.de/blog/single/geshify-a-geshi-syntax-highlighting-extension-for-expression-engine';
+	var $docs_url = 'http://geshify.com/docs';
 	var $settings = array();
 	var $settings_exist = 'y';
 	/*
@@ -56,8 +56,74 @@ class Geshify {
 		}
 		unset($key, $val);
 		// if you adjust this, make sure you also adjust the foreach loop used to parse the arguments
-		$this->llimit = '/'.preg_quote($this->settings['ldelimiter'], '/').preg_quote($this->settings['tag_name'], '/').'(?:\s*(?:((?:type|lang)=\w*)|(strict=(?:true|false|1|0))|(line=(?:normal|none|fancy\d*))|(start=\d+)|(keyword_links=(?:true|false|1|0))|(overall_class=\w*)|(overall_id=\w*)))*'.preg_quote($this->settings['rdelimiter'], '/').'/i';
-		$this->rlimit = $this->settings['ldelimiter'].'/'.$this->settings['tag_name'].$this->settings['rdelimiter'];
+		$this->llimit = 
+			'/' .
+			preg_quote($this->settings['ldelimiter'], '/') .
+			preg_quote($this->settings['tag_name'], '/') .
+			'(?:\s*	# extended regex allows me to comment on what I do; this will be looped, making it possible to specify parameters in any order
+				(?:
+					# language parameter
+					(lang			=
+						(?:
+							# non-quoted, double-quoted, single-quoted, note that backslashes must be escaped for PHP
+							\\w*|
+							"[^"]*"|
+							\'[^\']*\'
+						)
+					)|
+					# strict mode
+					(strict			=
+						(?:
+							(?:true|false|1|0)|
+							"(?:true|false|1|0)"|
+							\'(?:true|false|1|0)\'
+						)
+					)|
+					# line number style
+					(line			=
+						(?:
+							(?:none|normal|fancy\\d+)|
+							"(?:none|normal|fancy\\d+)"|
+							\'(?:none|normal|fancy\\d+)\'
+						)
+					)|
+					# first line number
+					(start			=
+						(?:
+							\\d+|
+							"\\d+"|
+							\'\\d+\'
+						)
+					)|
+					# whether to link keywords
+					(keyword_links	=
+						(?:
+							(?:true|false|1|0)|
+							"(?:true|false|1|0)"|
+							\'(?:true|false|1|0)\'
+						)
+					)|
+					# GeSHi overall class; the main reason why parameters can be quoted now
+					(overall_class	=
+						(?:
+							\\w*|
+							"[^"]*"|
+							\'[^\']*\'
+						)
+					)|
+					# GeSHi overall id
+					(overall_id		=
+						(?:
+							\\w*|
+							"[^"]*"|
+							\'[^\']*\'
+						)
+					)
+				)
+			)*' .
+			preg_quote($this->settings['rdelimiter'], '/') .
+			'/ix';
+		$this->rlimit = $this->settings['ldelimiter'] . '/' . $this->settings['tag_name'] . $this->settings['rdelimiter'];
 	}
 
 	/**
@@ -73,13 +139,43 @@ class Geshify {
 		$settings['ldelimiter'] = '[';
 		$settings['rdelimiter'] = ']';
 		$settings['tag_name'] = 'code';
-		$settings['default_type'] = array('s', array('php' => 'php', 'html4strict' => 'html4strict', 'html' => 'html', 'css' => 'css'), 'html4strict');
+		$settings['default_type'] = array(
+			's',
+			array(
+				'php' => 'php',
+				'html4strict' => 'html4strict',
+				'html' => 'html',
+				'css' => 'css'
+			),
+			'html4strict'
+		);
 		$settings['default_line'] = 'normal';
-		$settings['keyword_links'] = array('r', array(1 => 'yes', 0 => 'no'), 1);
-		$settings['geshi_version'] = array('s', array('1.0' => '1.0-stable', '1.1' => '1.1-alpha'), '1.0');
+		$settings['keyword_links'] = array(
+			'r',
+			array(
+				1 => 'yes',
+				0 => 'no'
+			),
+			1
+		);
+		$settings['geshi_version'] = array(
+			's',
+			array(
+				'1.0' => '1.0-stable',
+				'1.1' => '1.1-alpha'
+			),
+			'1.0'
+		);
 		$settings['geshi_encoding'] = 'utf-8';
 		$settings['cache_cutoff'] = '86400';
-		$settings['check_for_updates'] = array('r', array(1 => 'yes', 0 => 'no'), 1);
+		$settings['check_for_updates'] = array(
+			'r',
+			array(
+				1 => 'yes',
+				0 => 'no'
+			),
+			1
+		);
 		return $settings;
 	}
 
@@ -195,6 +291,10 @@ class Geshify {
 		}
 		// set the version in the DB to current
 		$DB->query("UPDATE ".$PREFS->ini('db_prefix')."_extensions SET version = '".$DB->escape_str($this->version)."' WHERE class = 'Geshify'");
+		if (version_compare($this->version, '0.3.9') === -1)
+		{
+			// I guess the doc url is always loaded from the source code as is the LG Addon Updater URL
+		}
 	}
 
 	/**
@@ -238,11 +338,24 @@ class Geshify {
 		foreach ($matches[0] as $key => $match)
 		{
 			$pos[$match[1]] = array();
-			$pos[$match[1]]['match']			= $match[0];
-			$pos[$match[1]]['type'] 			= !empty($matches[1][$key][0]) ? str_replace('/', '', substr($matches[1][$key][0], 5)) : NULL; // replacing slashes for security
-			if (!empty($matches[2][$key][0]))
+			$pos[$match[1]]['match'] = $match[0];
+			
+			// lang (called type internally for historical reasons)
+			if ($matches[1][$key][0] != '')
 			{
-				switch (strtolower(substr($matches[2][$key][0], 7))) {
+				// strip slashes for filesystem security and quotes because the value might be quoted
+				$pos[$match[1]]['type'] = str_replace(array('/', '"', "'"), '', substr($matches[1][$key][0], 5));
+			}
+			else
+			{
+				$pos[$match[1]]['type'] = NULL;
+			}
+			
+			// strict
+			if ($matches[2][$key][0] != '')
+			{
+				switch (str_replace(array('"', "'"), '', strtolower(substr($matches[2][$key][0], 7))))
+				{
 					case 'true':
 					case '1':
 						$pos[$match[1]]['strict'] = TRUE;
@@ -260,11 +373,17 @@ class Geshify {
 			{
 				$pos[$match[1]]['strict'] = NULL;
 			}
-			$pos[$match[1]]['line']				= !empty($matches[3][$key][0]) ? substr($matches[3][$key][0], 5) : NULL;
-			$pos[$match[1]]['start']			= !empty($matches[4][$key][0]) ? substr($matches[4][$key][0], 6) : NULL;
-			if (!empty($matches[5][$key][0]))
+			
+			// line
+			$pos[$match[1]]['line'] = ($matches[3][$key][0] != '') ? str_replace(array('"', "'"), '', substr($matches[3][$key][0], 5)) : NULL;
+			
+			// start
+			$pos[$match[1]]['start'] = ($matches[4][$key][0] != '') ? str_replace(array('"', "'"), '', substr($matches[4][$key][0], 6)) : NULL;
+			
+			// keyword_links
+			if ($matches[5][$key][0] != '')
 			{
-				switch (strtolower(substr($matches[5][$key][0], 14)))
+				switch (str_replace(array("'", '"'), '', strtolower(substr($matches[5][$key][0], 14))))
 				{
 					case 'true':
 					case '1':
@@ -283,12 +402,20 @@ class Geshify {
 			{
 				$pos[$match[1]]['keyword_links'] = NULL;
 			}
-			$pos[$match[1]]['overall_class']	= !empty($matches[6][$key][0]) ? substr($matches[6][$key][0], 14) : NULL;
-			$pos[$match[1]]['overall_id']		= !empty($matches[7][$key][0]) ? substr($matches[7][$key][0], 11) : NULL;
+			
+			// overall_class
+			$pos[$match[1]]['overall_class'] = ($matches[6][$key][0] != '') ? str_replace(array("'", '"'), '', substr($matches[6][$key][0], 14)) : NULL;
+			
+			// overall_id
+			$pos[$match[1]]['overall_id'] = ($matches[7][$key][0] != '') ? str_replace(array("'", '"'), '', substr($matches[7][$key][0], 11)) : NULL;
 		}
+		
+		// clean variables used in the loop
 		unset($matches, $key, $match);
+		
 		// krsort the array so we can use substr stuff and won't mess future replacements
 		krsort($pos);
+		
 		// Check for the cache dir
 		if (file_exists($cache_dir) && is_dir($cache_dir))
 		{
@@ -333,32 +460,34 @@ class Geshify {
 				}
 			}
 		}
+		
+		// loop through the code snippets
 		$i = 0;
 		foreach ($pos as $code_pos => $match)
 		{
 			$error = FALSE;
-			if (($code_end_pos = strpos($str, $this->rlimit, ((int) $code_pos+strlen($match['match'])))) !== FALSE)
+			if (($code_end_pos = strpos($str, $this->rlimit, ((int) $code_pos + strlen($match['match'])))) !== FALSE)
 			{
 				// we have a matching end tag.
 				// make sure cache is regenerated when changing options, too!
 				$md5 = md5(($not_geshified = substr($str, $code_pos + strlen($match['match']), ($code_end_pos - $code_pos - strlen($match['match'])))).print_r($match, TRUE).print_r($this->settings, TRUE));
 				
 				// check whether we already have this in a cache file
-				if (is_file($cache_dir.$md5) && is_readable($cache_dir.$md5))
+				if (is_file($cache_dir . $md5) && is_readable($cache_dir . $md5))
 				{
 					if (is_callable('file_get_contents'))
 					{
-						$geshified = file_get_contents($cache_dir.$md5);
+						$geshified = file_get_contents($cache_dir . $md5);
 						// this is for the garbage collection
-						touch($cache_dir.$md5);
+						touch($cache_dir . $md5);
 					}
 					else
 					{
 						// screw PHP4!
-						$f = fopen($cache_dir.$md5, 'r');
-						$geshified = fread($f, filesize($cache_dir.$md5));
+						$f = fopen($cache_dir . $md5, 'r');
+						$geshified = fread($f, filesize($cache_dir . $md5));
 						fclose($f);
-						touch($cache_dir.$md5);
+						touch($cache_dir . $md5);
 					}
 				}
 				else
@@ -634,7 +763,7 @@ class Geshify {
 		// add new source and return it
 		if ($this->settings['check_for_updates'] == TRUE)
 		{
-			$sources[] = 'http://www.neverpanic.de/documents/expressionengine-versions.php';
+			$sources[] = 'http://geshify.com/lg-addon-updater.php';
 		}
 		return $sources;
 	}
