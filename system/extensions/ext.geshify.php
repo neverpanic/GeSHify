@@ -2,13 +2,13 @@
 /**
  * @package	GeSHify
  * @author	Clemens Lang <neverpanic@gmail.com>
- * @link	http://www.neverpanic.de/blog/single/geshify-a-geshi-syntax-highlighting-extension-for-expression-engine
- * @version	0.3.8
+ * @link	http://geshify.com/docs
+ * @version	##VERSION##
  * @license	GPL
  */
-class Geshify {
+class GeSHify {
 	var $name = 'GeSHify';
-	var $version = '0.3.9';
+	var $version = '##VERSION##';
 	var $description = 'Passes code through the GeSHi syntax highlighter';
 	var $docs_url = 'http://geshify.com/docs';
 	var $settings = array();
@@ -41,7 +41,7 @@ class Geshify {
 	 * @return	void
 	 * @access	public
 	 */
-	function Geshify($settings = '')
+	function GeSHify($settings = '')
 	{
 		if (!empty($settings))
 		{
@@ -191,7 +191,7 @@ class Geshify {
 		$DB->query($DB->insert_string($PREFS->ini('db_prefix').'_extensions',
 			array(
 				'extension_id' => '',
-				'class' => 'Geshify',
+				'class' => 'GeSHify',
 				'method' => 'pre_typography',
 				'hook' => 'typography_parse_type_start',
 				'settings' => serialize($this->settings_default),
@@ -203,7 +203,7 @@ class Geshify {
 		$DB->query($DB->insert_string($PREFS->ini('db_prefix').'_extensions',
 			array(
 				'extension_id' => '',
-				'class' => 'Geshify',
+				'class' => 'GeSHify',
 				'method' => 'post_typography',
 				'hook' => 'typography_parse_type_end',
 				'settings' => serialize($this->settings_default),
@@ -289,12 +289,17 @@ class Geshify {
 				)
 			);
 		}
-		// set the version in the DB to current
-		$DB->query("UPDATE ".$PREFS->ini('db_prefix')."_extensions SET version = '".$DB->escape_str($this->version)."' WHERE class = 'Geshify'");
 		if (version_compare($this->version, '0.3.9') === -1)
 		{
 			// I guess the doc url is always loaded from the source code as is the LG Addon Updater URL
 		}
+		if (version_compare($this->version, '0.3.9.1') === -1)
+		{
+			// proper capitalization in the database
+			$DB->query("UPDATE " . $PREFS->ini('db_prefix') . "_extensions SET class = 'GeSHify' WHERE class LIKE 'Geshify'");
+		}
+		// set the version in the DB to current
+		$DB->query("UPDATE ".$PREFS->ini('db_prefix')."_extensions SET version = '".$DB->escape_str($this->version)."' WHERE class = 'GeSHify'");
 	}
 
 	/**
@@ -306,7 +311,7 @@ class Geshify {
 	function disable_extension()
 	{
 		global $DB, $PREFS;
-		$DB->query("DELETE FROM ".$PREFS->ini('db_prefix')."_extensions WHERE class = 'Geshify'");
+		$DB->query("DELETE FROM ".$PREFS->ini('db_prefix')."_extensions WHERE class = 'GeSHify'");
 	}
 
 	/**
