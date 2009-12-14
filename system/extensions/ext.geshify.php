@@ -36,7 +36,7 @@ class GeSHify {
 	);
 
 	/**
-	 * Contructor - accepts settings array
+	 * initialized a new GeSHify instance using the passed settings array
 	 * @param	array	$settings	optional		Optional associative Array with options
 	 * @return	void
 	 * @access	public
