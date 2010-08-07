@@ -9,8 +9,9 @@ h2. Installation
 p. To install GeSHify, extract the archive into your Expression Engine directory. Then go to http://sourceforge.net/projects/geshi/files and get the latest versions of GeSHi 1.0 and GeSHi 1.1 (in the geshi-dev folder at the very bottom of the page).
 
 p. Extract both archives and copy
-	* from GeSHi 1.0: @geshi.php@ and the @geshi@ folder into @system/extensions/geshi-1.0@ (creating it, if it doesn't exist)
-	* from GeSHi 1.1: @class.geshi.php@ and the @geshi@ folder into @system/extensions/geshi-1.1@ (also creating it, if it doesn't exist).
+
+* from GeSHi 1.0: @geshi.php@ and the @geshi@ folder into @system/extensions/geshi-1.0@ (creating it, if it doesn't exist)
+* from GeSHi 1.1: @class.geshi.php@ and the @geshi@ folder into @system/extensions/geshi-1.1@ (also creating it, if it doesn't exist).
 
 p. Enable GeSHify in the Extension Manager in your control panel by going to Admin » Utilities » Extensions Manager and clicking "enable" in the table row for GeSHify.
 
