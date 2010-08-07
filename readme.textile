@@ -1,21 +1,25 @@
-h1.GeSHify Readme
+h1. GeSHify Readme
 
-p.GeSHify is a source-code syntax highlighting extension for the "ExpressionEngine":http://expressionengine.com/ content management system. It is based on the popular open-source PHP syntax highlighting software "GeSHi":http://qbnz.com/highlighter/, which currently supports more than 130 different programming languages, among wich are not only big and important languages like C, C++, C# or Java and web languages like PHP, HTML, CSS, SQL or JavaScript, but also lesser-known or esoteric languages, e.g. "COBOL":http://en.wikipedia.org/wiki/COBOL, "Eiffel":http://en.wikipedia.org/wiki/Eiffel_(programming_language), "INTERCAL":http://en.wikipedia.org/wiki/INTERCAL, "Brainfuck":http://en.wikipedia.org/wiki/Brainfuck and "Whitespace":http://en.wikipedia.org/wiki/Whitespace_(programming_language), just to name a few.
-p.GeSHify wraps this powerful syntax highlighting engine in an easy-to-use extension supporting customizable intelligent caching and switching between different GeSHi versions with a single click. It is also configurable to fit your special needs using a combination of global settings and HTML-style arguments.
+p. GeSHify is a source-code syntax highlighting extension for the "ExpressionEngine":http://expressionengine.com/ content management system. It is based on the popular open-source PHP syntax highlighting software "GeSHi":http://qbnz.com/highlighter/, which currently supports more than 130 different programming languages, among wich are not only big and important languages like C, C++, C# or Java and web languages like PHP, HTML, CSS, SQL or JavaScript, but also lesser-known or esoteric languages, e.g. "COBOL":http://en.wikipedia.org/wiki/COBOL, "Eiffel":http://en.wikipedia.org/wiki/Eiffel_(programming_language), "INTERCAL":http://en.wikipedia.org/wiki/INTERCAL, "Brainfuck":http://en.wikipedia.org/wiki/Brainfuck and "Whitespace":http://en.wikipedia.org/wiki/Whitespace_(programming_language), just to name a few.
 
-h2.Installation
+p. GeSHify wraps this powerful syntax highlighting engine in an easy-to-use extension supporting customizable intelligent caching and switching between different GeSHi versions with a single click. It is also configurable to fit your special needs using a combination of global settings and HTML-style arguments.
 
-p.To install GeSHify, extract the archive into your Expression Engine directory. Then go to http://sourceforge.net/projects/geshi/files and get the latest versions of GeSHi 1.0 and GeSHi 1.1 (in the geshi-dev folder at the very bottom of the page).
-p.Extract both archives and copy
+h2. Installation
+
+p. To install GeSHify, extract the archive into your Expression Engine directory. Then go to http://sourceforge.net/projects/geshi/files and get the latest versions of GeSHi 1.0 and GeSHi 1.1 (in the geshi-dev folder at the very bottom of the page).
+
+p. Extract both archives and copy
 	* from GeSHi 1.0: @geshi.php@ and the @geshi@ folder into @system/extensions/geshi-1.0@ (creating it, if it doesn't exist)
 	* from GeSHi 1.1: @class.geshi.php@ and the @geshi@ folder into @system/extensions/geshi-1.1@ (also creating it, if it doesn't exist).
+
 p. Enable GeSHify in the Extension Manager in your control panel by going to Admin » Utilities » Extensions Manager and clicking "enable" in the table row for GeSHify.
 
-h2.Updating
+h2. Updating
 
-p.Updating GeSHify is just a matter of overwriting GeSHify's source files. GeSHify will automatically notice it's been updated the next time it's being used and take the necessary steps.
-p.While you're at updating GeSHify, you might want to update GeSHi, too.
+p. Updating GeSHify is just a matter of overwriting GeSHify's source files. GeSHify will automatically notice it's been updated the next time it's being used and take the necessary steps.
 
-h2.Reporting Bugs and Requesting Features
+p. While you're at updating GeSHify, you might want to update GeSHi, too.
 
-p.If you want to report a bug or request a feature, you're welcome to do so. You can either mail me or use the "issue tracker on GitHub":http://github.com/neverpanic/GeSHify/issues.
+h2. Reporting Bugs and Requesting Features
+
+p. If you want to report a bug or request a feature, you're welcome to do so. You can either mail me or use the "issue tracker on GitHub":http://github.com/neverpanic/GeSHify/issues.
