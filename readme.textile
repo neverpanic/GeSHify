@@ -6,7 +6,7 @@ p. GeSHify wraps this powerful syntax highlighting engine in an easy-to-use exte
 
 h2. Installation
 
-p. To install GeSHify, extract the archive into your Expression Engine directory. Then go to http://sourceforge.net/projects/geshi/files and get the latest versions of GeSHi 1.0 and GeSHi 1.1 (in the geshi-dev folder at the very bottom of the page).
+p. To install GeSHify, extract the archive into your Expression Engine directory. Then go to http://sourceforge.net/projects/geshi/files and get the latest versions of GeSHi 1.0 and GeSHi 1.1 (in the geshi-dev folder at the very bottom of the page). Side note: I tried automating this process, but Sourceforge's servers do what they can to stop you from automated downloading.
 
 p. Extract both archives and copy
 
