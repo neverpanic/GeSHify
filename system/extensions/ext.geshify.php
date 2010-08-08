@@ -3,12 +3,14 @@
  * @package	GeSHify
  * @author	Clemens Lang <neverpanic@gmail.com>
  * @link	http://geshify.com/docs
- * @version	##VERSION##
  * @license	GPL
  */
+
+define('GESHIFY_VERSION', '0.3.9.1');
+
 class GeSHify {
 	var $name = 'GeSHify';
-	var $version = '##VERSION##';
+	var $version = GESHIFY_VERSION;
 	var $description = 'Passes code through the GeSHi syntax highlighter';
 	var $docs_url = 'http://geshify.com/docs';
 	var $settings = array();
