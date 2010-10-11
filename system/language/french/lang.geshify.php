@@ -48,6 +48,9 @@ $L = array(
 "geshi_encoding" =>
 'Encodage &agrave; utiliser pour GeSHi. Les valeurs valides sont celles de la fonction PHP <a href="http://www.php.net/htmlentities">htmlentities</a>',
 
+"geshi_header_type" =>
+'Value for the function <a href="http://qbnz.com/highlighter/geshi-doc.html#the-code-container">geshi_header_type()</a> determining encapsulation of the code (GeSHi 1.0 only)',
+
 "default_line" =>
 "Valeur par d&eacute;faut du style pour les num&eacute;ros de lignes lorsqu'aucun n'est sp&eacute;cifi&eacute; en utilisant line={normal|fancy99|none}. Entrer fancy[chiffre] pour activer les num&eacute;ros de lignes 'fancy' pour que chaque [chiffre]&egrave;me num&eacute;ro de lignes soit mis en &eacute;vidence",
 

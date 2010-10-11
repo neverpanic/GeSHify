@@ -48,6 +48,9 @@ $L = array(
 "geshi_encoding" =>
 'Encoding to use for GeSHi. Valid values are those valid for the php function <a href="http://www.php.net/htmlentities">htmlentities</a>',
 
+"geshi_header_type" =>
+'Value for the function <a href="http://qbnz.com/highlighter/geshi-doc.html#the-code-container">geshi_header_type()</a> determining encapsulation of the code (GeSHi 1.0 only)',
+
 "default_line" =>
 "Default line numbering style to use when none is specified using line={normal|fancy99|none}. Enter fancy[digits] to enable fancy line numbers while each [digit]th line number is highlighted",
 

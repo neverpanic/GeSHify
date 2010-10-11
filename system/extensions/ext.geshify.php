@@ -6,7 +6,7 @@
  * @license	GPL
  */
 
-define('GESHIFY_VERSION', '0.3.9.1');
+define('GESHIFY_VERSION', '0.3.10');
 
 class GeSHify {
 	var $name = 'GeSHify';
@@ -33,6 +33,7 @@ class GeSHify {
 		'keyword_links' => TRUE,
 		'geshi_version' => '1.0',
 		'geshi_encoding' => 'utf-8',
+		'geshi_header_type' => 'pre-valid',
 		'cache_cutoff' => 86400,
 		'check_for_updates' => TRUE,
 	);
@@ -169,6 +170,17 @@ class GeSHify {
 			'1.0'
 		);
 		$settings['geshi_encoding'] = 'utf-8';
+		$settings['geshi_header_type'] = array(
+			's',
+			array(
+				'div' => 'div',
+				'pre' => 'pre',
+				'pre-valid' => 'pre-valid',
+				'pre-table' => 'pre-table',
+				'none' => 'none'
+			),
+			'pre-valid'
+		);
 		$settings['cache_cutoff'] = '86400';
 		$settings['check_for_updates'] = array(
 			'r',
@@ -266,6 +278,7 @@ class GeSHify {
 		if (version_compare($this->version, '0.3.8') === -1)
 		{
 			$this->settings['check_for_updates'] = TRUE;
+			$DB->query("UPDATE ".$PREFS->ini('db_prefix')."_extensions SET settings = '".$DB->escape_str(serialize($this->settings))."' WHERE class LIKE 'Geshify'");
 			// add the necessary hooks for the addon checker
 			$DB->query($DB->insert_string($PREFS->ini('db_prefix').'_extensions',
 				array(
@@ -299,6 +312,11 @@ class GeSHify {
 		{
 			// proper capitalization in the database
 			$DB->query("UPDATE " . $PREFS->ini('db_prefix') . "_extensions SET class = 'GeSHify' WHERE class LIKE 'Geshify'");
+		}
+		if (version_compare($this->version, '0.3.10') === -1)
+		{
+			$this->settings['geshi_header_type'] = 'pre-valid';
+			$DB->query("UPDATE ".$PREFS->ini('db_prefix')."_extensions SET settings = '".$DB->escape_str(serialize($this->settings))."' WHERE class = 'GeSHify'");
 		}
 		// set the version in the DB to current
 		$DB->query("UPDATE ".$PREFS->ini('db_prefix')."_extensions SET version = '".$DB->escape_str($this->version)."' WHERE class = 'GeSHify'");
@@ -506,75 +524,14 @@ class GeSHify {
 						include_once(dirname(__FILE__).'/geshi-1.1/class.geshi.php');
 						// highlight code according to type setting, default to setting
 						$geshi = new GeSHi($not_geshified, $match['type'] !== NULL ? $match['type'] : $this->settings['default_type']);
-						// neither line numbers, nor strict mode is supported in GeSHi 1.1 yet.
 						$str_error = $geshi->error();
 						if (empty($str_error))
 						{
-							// set line number style, if GeSHi supports it
-							if (is_callable($geshi, 'enableLineNumbers'))
-							{
-								switch (!empty($match['line']) ? strtolower(preg_replace('/\d*/', '', $match['line'])) : $this->settings['default_line'])
-								{
-									case 'normal':
-										$geshi->enableLineNumbers(GESHI_NORMAL_LINE_NUMBERS);
-										break;
-									case 'fancy':
-										$geshi->enableLineNumbers(GESHI_FANCY_LINE_NUMBERS, (int) preg_replace('/[^\d]*/', '', $match['line']));
-										break;
-									case 'none':
-										$geshi->enableLineNumbers(GESHI_NO_LINE_NUMBERS);
-										break;
-								}
-							}
-							
-							// set start line number if GeSHi supports it
-							if (is_callable(array($geshi, 'startLineNumbersAt')))
-							{
-								if ($match['start'])
-								{
-									$geshi->startLineNumbersAt($match['start']);
-								}
-							}
-							
-							// set strict mode if GeSHi supports it
-							if (is_callable(array($geshi, 'enableStrictMode')))
-							{
-								if ($match['strict'])
-								{
-									$geshi->enableStrictMode(TRUE);
-								}
-							}
-							
-							// set encoding (afair this is for legacy reasons only anyway)
-							if (is_callable(array($geshi, 'setEncoding')))
-							{
-								$geshi->setEncoding($this->settings['geshi_encoding']);
-							}
-							
-							// set whether to link keywords to the documentation
-							if (is_callable(array($geshi, 'enableKeywordLinks')))
-							{
-								$geshi->enableKeywordLinks((bool) ($match['keyword_links'] !== NULL) ? $match['keyword_links'] : $this->settings['keyword_links']);
-							}
-							
-							// set overall class name
-							if (is_callable(array($geshi, 'setOverallClass')))
-							{
-								if ($match['overall_class'] != NULL)
-								{
-									$geshi->setOverallClass($match['overall_class']);
-								}
-							}
-							
-							// set overall id
-							if (is_callable(array($geshi, 'setOverallId')))
-							{
-								if ($match['overall_id'] != NULL)
-								{
-									$geshi->setOverallId($match['overall_id']);
-								}
-							}
-							
+							// neither line numbers, nor strict mode is supported in GeSHi 1.1 yet.
+							// in fact it does pretty much nothing
+							// there used to be a rather large block of code here, testing wether methods were callable and call them if 
+							// that's the case.
+
 							// parse the code
 							$geshified = $geshi->parseCode();
 						}
@@ -631,6 +588,25 @@ class GeSHify {
 							if ($match['overall_id'] != NULL)
 							{
 								$geshi->set_overall_id($match['overall_id']);
+							}
+
+							// set header type
+							switch ($this->settings['geshi_header_type']) {
+								case 'div':
+									$geshi->set_header_type(GESHI_HEADER_DIV);
+									break;
+								case 'pre':
+									$geshi->set_header_type(GESHI_HEADER_PRE);
+									break;
+								case 'pre-valid':
+									$geshi->set_header_type(GESHI_HEADER_PRE_VALID);
+									break;
+								case 'pre-table':
+									$geshi->set_header_type(GESHI_HEADER_PRE_TABLE);
+									break;
+								case 'none':
+									$geshi->set_header_type(GESHI_HEADER_NONE);
+									break;
 							}
 							
 							// set encoding (for legacy reasons afaik)
