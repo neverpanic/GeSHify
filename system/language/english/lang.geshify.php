@@ -48,6 +48,21 @@ $L = array(
 "geshi_encoding" =>
 'Encoding to use for GeSHi. Valid values are those valid for the php function <a href="http://www.php.net/htmlentities">htmlentities</a>',
 
+"div" =>
+'GESHI_HEADER_DIV',
+
+"pre" =>
+'GESHI_HEADER_PRE',
+
+"pre-valid" =>
+'GESHI_HEADER_PRE_VALID',
+
+"pre-table" =>
+'GESHI_HEADER_PRE_TABLE',
+
+"none" =>
+'GESHI_HEADER_NONE',
+
 "geshi_header_type" =>
 'Value for the function <a href="http://qbnz.com/highlighter/geshi-doc.html#the-code-container">geshi_header_type()</a> determining encapsulation of the code (GeSHi 1.0 only)',
 

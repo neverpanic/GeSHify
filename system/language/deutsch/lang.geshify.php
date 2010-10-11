@@ -51,6 +51,21 @@ $L = array(
 "geshi_header_type" =>
 'Wert für die Funktion <a href="http://qbnz.com/highlighter/geshi-doc.html#the-code-container">geshi_header_type()</a>, die bestimmt, wie der Code gekapselt wird (nur GeSHi 1.0)',
 
+"div" =>
+'GESHI_HEADER_DIV',
+
+"pre" =>
+'GESHI_HEADER_PRE',
+
+"pre-valid" =>
+'GESHI_HEADER_PRE_VALID',
+
+"pre-table" =>
+'GESHI_HEADER_PRE_TABLE',
+
+"none" =>
+'GESHI_HEADER_NONE',
+
 "default_line" =>
 "vorgegebener Zeilennummerierungstyp, der benutzt wird, wenn nicht via line={normal|fancy99|none} explizit ein anderer angegeben wurde. Gibt fancy<i>[Zahl]</i> ein, um jede <i>[Zahl]</i>-te Zeile hervorzuheben.",
 
