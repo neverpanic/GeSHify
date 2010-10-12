@@ -49,7 +49,7 @@ $L = array(
 'Encodage &agrave; utiliser pour GeSHi. Les valeurs valides sont celles de la fonction PHP <a href="http://www.php.net/htmlentities">htmlentities</a>',
 
 "geshi_header_type" =>
-'Value for the function <a href="http://qbnz.com/highlighter/geshi-doc.html#the-code-container">geshi_header_type()</a> determining encapsulation of the code (GeSHi 1.0 only)',
+'Value for the function <a href="http://qbnz.com/highlighter/geshi-doc.html#the-code-container">set_header_type()</a> determining encapsulation of the code (GeSHi 1.0 only)',
 
 "div" =>
 'GESHI_HEADER_DIV',

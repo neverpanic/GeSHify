@@ -49,7 +49,7 @@ $L = array(
 'Zeichenkodierung für GeSHi. Mögliche Werte entsprechen den möglichen Werten der PHP-Funktion <a href="http://www.php.net/htmlentities">htmlentities</a>',
 
 "geshi_header_type" =>
-'Wert für die Funktion <a href="http://qbnz.com/highlighter/geshi-doc.html#the-code-container">geshi_header_type()</a>, die bestimmt, wie der Code gekapselt wird (nur GeSHi 1.0)',
+'Wert für die Funktion <a href="http://qbnz.com/highlighter/geshi-doc.html#the-code-container">set_header_type()</a>, die bestimmt, wie der Code gekapselt wird (nur GeSHi 1.0)',
 
 "div" =>
 'GESHI_HEADER_DIV',
