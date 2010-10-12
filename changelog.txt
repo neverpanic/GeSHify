@@ -5,6 +5,12 @@ GeSHify Changelog
 	» none
 	Please report any bugs you encounter or your feature wish list to neverpanic@gmail.com. Thank you.
 
+[[ 0.3.10 :: 12.10.2010 ]]
+	» Added setting that calls set_header_type($type) to allow valid HTML output on suggestion of Sebastian Schuberth.
+	  The default value is GESHI_HEADER_PRE_VALID, which differs from GeSHi's default of GESHI_HEADER_PRE (the latter produces invalid HTML).
+	  If this breaks your CSS you might want to change this or update your CSS.
+	» Fixed a bug that prevented using fancy (i.e. highlighted) line numbers.
+
 [[ 0.3.9.1 :: 20.12.2009 ]]
 	» fixed some notices (empty() vs. != '')
 	» changes to the internal packaging process
