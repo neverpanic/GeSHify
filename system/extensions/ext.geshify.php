@@ -550,13 +550,14 @@ class GeSHify {
 						if (empty($str_error))
 						{
 							// enable line numbers
-							switch (!empty($match['line']) ? strtolower(preg_replace('/\d*/', '', $match['line'])) : $this->settings['default_line'])
+							$number_style = (!empty($match['line'])) ? $match['line'] : $this->settings['default_line'];
+							switch (strtolower(preg_replace('/\d+/', '', $number_style)))
 							{
 								case 'normal':
 									$geshi->enable_line_numbers(GESHI_NORMAL_LINE_NUMBERS);
 									break;
 								case 'fancy':
-									$geshi->enable_line_numbers(GESHI_FANCY_LINE_NUMBERS, (int) preg_replace('/[^\d]*/', '', $match['line']));
+									$geshi->enable_line_numbers(GESHI_FANCY_LINE_NUMBERS, (int) preg_replace('/[^\d]*/', '', $number_style));
 									break;
 								case 'none':
 									$geshi->enable_line_numbers(GESHI_NO_LINE_NUMBERS);
